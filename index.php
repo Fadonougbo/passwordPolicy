@@ -3,8 +3,20 @@ require './vendor/autoload.php';
 
 use PasswordPolicy\PasswordPolicy;
 
-$passwordPolicy=new PasswordPolicy('Gautier');
-        $result=$passwordPolicy->withUppercase(true)
-                                 ->getStatus();
+$data='abcdefghijklmnopqrstuvwxyz';
+
+$splitData=preg_split('/\B/',$data);
+
+$limit="{2,4}";
+
+$response=array_map(function($el) use($limit) {
+
+    return "^$el{$limit}$";
+
+},$splitData);
+
+$r=implode('|',$response);
+
+dump($r);
 
 ?>
