@@ -63,7 +63,7 @@ describe('withLower test',function() {
 
         $passwordPolicy=new PasswordPolicy($secret);
 
-        $result=$passwordPolicy->withLowercase(false)
+        $result=$passwordPolicy->withLowercase(1,1)
                                  ->getStatus();
       
          expect($result)->toBeTrue();
@@ -75,7 +75,7 @@ describe('withLower test',function() {
 
         $passwordPolicy=new PasswordPolicy($secret);
 
-        $result=$passwordPolicy->withLowercase(false)
+        $result=$passwordPolicy->withLowercase(1,1)
                                  ->getStatus();
       
          expect($result)->toBeFalse();
@@ -87,7 +87,7 @@ describe('withLower test',function() {
 
         $passwordPolicy=new PasswordPolicy($secret);
 
-        $result=$passwordPolicy->withLowercase()
+        $result=$passwordPolicy->withLowercase(1,5)
                                  ->getStatus();
       
          expect($result)->toBeTrue();
@@ -99,7 +99,7 @@ describe('withLower test',function() {
 
         $passwordPolicy=new PasswordPolicy($secret);
 
-        $result=$passwordPolicy->withLowercase()
+        $result=$passwordPolicy->withLowercase(2)
                                  ->getStatus();
       
          expect($result)->toBeFalse();
@@ -118,7 +118,7 @@ describe('withNumber test',function() {
 
         $passwordPolicy=new PasswordPolicy($secret);
 
-        $result=$passwordPolicy->withNumber(false)
+        $result=$passwordPolicy->withNumber(1,1)
                                  ->getStatus();
       
          expect($result)->toBeTrue();
@@ -126,11 +126,11 @@ describe('withNumber test',function() {
     
     })->with(['user2','ID#)3']);
 
-    test('word with one number : error case', function (string $secret) {
+     test('word with one number : error case', function (string $secret) {
 
         $passwordPolicy=new PasswordPolicy($secret);
 
-        $result=$passwordPolicy->withNumber(false)
+        $result=$passwordPolicy->withNumber(1,1)
                                  ->getStatus();
       
          expect($result)->toBeFalse();
@@ -142,7 +142,7 @@ describe('withNumber test',function() {
 
         $passwordPolicy=new PasswordPolicy($secret);
 
-        $result=$passwordPolicy->withNumber()
+        $result=$passwordPolicy->withNumber(1,3)
                                  ->getStatus();
       
          expect($result)->toBeTrue();
@@ -154,7 +154,7 @@ describe('withNumber test',function() {
 
         $passwordPolicy=new PasswordPolicy($secret);
 
-        $result=$passwordPolicy->withNumber()
+        $result=$passwordPolicy->withNumber(1,4)
                                  ->getStatus();
       
          expect($result)->toBeFalse();
@@ -173,7 +173,7 @@ describe('withSymbol test',function() {
 
         $passwordPolicy=new PasswordPolicy($secret);
 
-        $result=$passwordPolicy->withSymbol(false)
+        $result=$passwordPolicy->withSymbol()
                                  ->getStatus();
       
          expect($result)->toBeTrue();
@@ -185,19 +185,19 @@ describe('withSymbol test',function() {
 
         $passwordPolicy=new PasswordPolicy($secret);
 
-        $result=$passwordPolicy->withSymbol(false)
+        $result=$passwordPolicy->withSymbol(max:1)
                                  ->getStatus();
       
          expect($result)->toBeFalse();
 
     
-    })->with(['doe@gmail.com','www.google.com','user']);
- 
+    })->with(['doe@gmail.com','www.google.com']);
+  
      test('accept one or many symbols : normal case', function (string $secret) {
 
         $passwordPolicy=new PasswordPolicy($secret);
 
-        $result=$passwordPolicy->withSymbol()
+        $result=$passwordPolicy->withSymbol(1)
                                  ->getStatus();
       
          expect($result)->toBeTrue();
@@ -205,17 +205,98 @@ describe('withSymbol test',function() {
     
      })->with(['doe@gmail.com',':D)']);
 
-    test('accept one or  many number: error case ', function (string $secret) {
+     test('accept one or  many number: error case ', function (string $secret) {
 
         $passwordPolicy=new PasswordPolicy($secret);
 
-        $result=$passwordPolicy->withSymbol()
+        $result=$passwordPolicy->withSymbol(1)
                                  ->getStatus();
       
          expect($result)->toBeFalse();
 
     
     })->with(['doegmailcom','']); 
+ 
+
+     test('accept between 3 and 5 symbols : normal case', function (string $secret) {
+
+        $passwordPolicy=new PasswordPolicy($secret);
+
+        $result=$passwordPolicy->withSymbol(3,5)
+                                 ->getStatus();
+      
+         expect($result)->toBeTrue();
+
+    
+     })->with(['doe@gm#ai$l.com','$ueser()']); 
+
+
+      test('accept between 3 and 5 symbols : error case', function (string $secret) {
+
+        $passwordPolicy=new PasswordPolicy($secret);
+
+        $result=$passwordPolicy->withSymbol(3,5)
+                                 ->getStatus();
+      
+         expect($result)->toBeFalse();
+
+    
+     })->with(['>>>>>>>>','**']);
+
+     test('accept min 3 symbols : normal case', function (string $secret) {
+
+        $passwordPolicy=new PasswordPolicy($secret);
+
+        $result=$passwordPolicy->withSymbol(3)
+                                 ->getStatus();
+      
+         expect($result)->toBeTrue();
+
+    
+     })->with(['#####','user@*&^']);
+
+
+     test('accept max 3 symbols : normal case', function (string $secret) {
+
+        $passwordPolicy=new PasswordPolicy($secret);
+
+        $result=$passwordPolicy->withSymbol(max:3)
+                                 ->getStatus();
+      
+         expect($result)->toBeFalse();
+
+    
+     })->with(['#####','user@*&^4$']);
+
+     test('accept 0 symbols\ : normal case', function (string $secret) {
+
+        $passwordPolicy=new PasswordPolicy($secret);
+
+        $result=$passwordPolicy->withSymbol()
+                                 ->getStatus();
+
+                                
+      
+         expect($result)->toBeTrue();
+
+    
+     })->with(['johnDoe']);
+
+     test('accept 1 symbols\ : error case', function (string $secret) {
+
+        $passwordPolicy=new PasswordPolicy($secret);
+
+        $result=$passwordPolicy->withSymbol(1)
+                                 ->getStatus();
+
+                                
+      
+         expect($result)->toBeFalse();
+
+    
+     })->with(['johnDoe']);
+
+    
 
 });
 
@@ -233,9 +314,9 @@ describe('blockSameCharactere test',function() {
          expect($result)->toBeTrue();
 
     
-    })->with(['eeeeeeeeeeeeee']);
+    })->with(['eeeeeeeeeeeeee','3333333333333333']);
 
-    /* test('word with same charactere : error case', function (string $secret) {
+    test('word with same charactere : error case', function (string $secret) {
 
         $passwordPolicy=new PasswordPolicy($secret);
 
@@ -245,9 +326,9 @@ describe('blockSameCharactere test',function() {
          expect($result)->toBeFalse();
 
     
-    })->with(['22222222222ss22']);
- */
-   /*  test('word with same charactere : min max case', function (string $secret) {
+    })->with(['22222222222ss22','UUUQI']);
+
+    test('word with same charactere : min max case', function (string $secret) {
 
         $passwordPolicy=new PasswordPolicy($secret);
 
@@ -257,7 +338,7 @@ describe('blockSameCharactere test',function() {
          expect($result)->toBeTrue();
 
     
-    })->with(['kkkk']); */
+    })->with(['kkkk','ooooooo','UUUUU','1111']);
 
     /* test('word with same charactere : min max error case', function (string $secret) {
 

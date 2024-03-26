@@ -3,20 +3,12 @@ require './vendor/autoload.php';
 
 use PasswordPolicy\PasswordPolicy;
 
-$data='abcdefghijklmnopqrstuvwxyz';
+$isValidated=preg_match_all('/[\W_]/','johnDoe',$matches);
 
-$splitData=preg_split('/\B/',$data);
 
-$limit="{2,4}";
+$symbolList=$matches[0];
 
-$response=array_map(function($el) use($limit) {
+dump(empty($symbolList));
 
-    return "^$el{$limit}$";
-
-},$splitData);
-
-$r=implode('|',$response);
-
-dump($r);
 
 ?>
