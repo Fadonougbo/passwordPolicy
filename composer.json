@@ -2,7 +2,8 @@
     "name": "gautier/password-policy",
     "autoload": {
         "psr-4": {
-            "PasswordPolicy\\": "class/"
+            "PasswordPolicy\\": "class/",
+            "PasswordPolicyException\\":"exception/"
         }
     },
     "authors": [

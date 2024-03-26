@@ -8,13 +8,13 @@ test('Result  test',function(string $secret) {
 
     $passwordPolicy=new PasswordPolicy($secret);
 
-    $result=$passwordPolicy->withUppercase(false)
+    $result=$passwordPolicy->withUppercase()
                             ->withLowercase()
-                            ->withSymbol(false)
+                            ->withSymbol()
                             ->withNumber()
                             ->getData();
     
-        expect($result)->toBeObject()->toHaveProperties(['status','totalRull','totalValidated']);
+        expect($result)->toBeObject()->toHaveProperties(['status','totalRule','totalValidated']);
 
 })->with([
     'Gautier2002@'
@@ -31,7 +31,7 @@ test('good password  test',function(string $secret) {
                             ->getData();
     
         expect($result)->toBeObject()->toHaveProperties([
-            'totalRull'=>4,
+            'totalRule'=>4,
             'totalValidated'=>4,
             'status'=>true
         ]);
@@ -46,13 +46,13 @@ test('good password  test with 3 policies ',function(string $secret) {
 
     $passwordPolicy=new PasswordPolicy($secret);
 
-    $result=$passwordPolicy->withUppercase(false)
+    $result=$passwordPolicy->withUppercase()
                             ->withLowercase()
-                            ->withSymbol(false)
+                            ->withSymbol()
                             ->getData();
     
         expect($result)->toBeObject()->toHaveProperties([
-            'totalRull'=>3,
+            'totalRule'=>3,
             'totalValidated'=>3,
             'status'=>true
         ]);
@@ -67,14 +67,14 @@ test('bad password  test  ',function(string $secret) {
 
     $passwordPolicy=new PasswordPolicy($secret);
 
-    $result=$passwordPolicy->withUppercase(false)
-                            ->withSymbol(false)
+    $result=$passwordPolicy->withUppercase()
+                            ->withSymbol()
                             ->getData();
     
         expect($result)->toBeObject()->toHaveProperties([
-            'totalRull'=>2,
-            'totalValidated'=>1,
-            'status'=>false
+            'totalRule'=>2,
+            'totalValidated'=>2,
+            'status'=>true
         ]);
         
        
@@ -82,6 +82,30 @@ test('bad password  test  ',function(string $secret) {
 })->with([
     'gautier@'
 ]);
+
+test('Block same caracter  test  ',function(string $secret) {
+
+    $passwordPolicy=new PasswordPolicy($secret);
+
+    $result=$passwordPolicy->withNumber()
+                            ->withLowercase()
+                            ->blockSameCharacter()
+                            ->getData();
+    
+        expect($result)->toBeObject()->toHaveProperties([
+            'totalRule'=>3,
+            'totalValidated'=>3,
+            'status'=>true
+        ]);
+        
+       
+
+})->with([
+    '11111111','wwwwwwwwww'
+]);
+
+
+
 
 
 

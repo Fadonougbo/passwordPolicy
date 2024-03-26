@@ -59,3 +59,19 @@ $regex=!$acceptMany?"/(^[A-Z\d\W]*[a-z]{1}[A-Z\d\W]*$)+/":"/(^.*[a-z]+.*$)+/";
         }
 
         return $this;
+
+
+
+//Uper 
+
+
+$regex=!$acceptMany?"/(^[a-z\d\W]*[A-Z]{1}[a-z\d\W]*$)+/":"/(^.*[A-Z]+.*$)+/";
+
+        $status=preg_match_all($regex,$this->secret);
+
+        $this->incrementTotalRull();
+        if($status) {
+            $this->incrementId();
+        }
+
+        return $this;

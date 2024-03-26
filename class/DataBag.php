@@ -7,10 +7,11 @@ class DataBag {
 
     public function __construct(
 
-        public int $totalRull,
+        public int $totalRule,
         public int $totalValidated,
         public bool $status,
-        public string $secret
+        public string $secret,
+        public array $messages
 
     ) {
 

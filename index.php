@@ -3,12 +3,12 @@ require './vendor/autoload.php';
 
 use PasswordPolicy\PasswordPolicy;
 
-$isValidated=preg_match_all('/[\W_]/','johnDoe',$matches);
+$passwordPolicy=new PasswordPolicy('333');
+$result=$passwordPolicy->withSymbol(1,2,'okok')
+->withNumber(1,2)
+                                 ->getData();
 
-
-$symbolList=$matches[0];
-
-dump(empty($symbolList));
+dump($result);
 
 
 ?>
