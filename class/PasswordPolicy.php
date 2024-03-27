@@ -366,6 +366,7 @@ class PasswordPolicy extends PasswordPolicyUtils {
             
         $this->messages['block_reason']="Password not accepted";
 
+
         return $this;
 
     }
