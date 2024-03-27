@@ -11,7 +11,8 @@ class DataBag {
         public int $totalValidated,
         public bool $status,
         public string $secret,
-        public array $messages
+        public array $messages,
+        public int $length
 
     ) {
 

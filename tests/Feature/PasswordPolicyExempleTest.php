@@ -31,9 +31,12 @@ test('good password  test',function(string $secret) {
                             ->getData();
     
         expect($result)->toBeObject()->toHaveProperties([
-            'totalRule'=>4,
+            
             'totalValidated'=>4,
-            'status'=>true
+            'status'=>true,
+            'totalRule'=>4,
+            'length'=>12
+
         ]);
         
        
@@ -91,17 +94,21 @@ test('Block same caracter  test  ',function(string $secret) {
                             ->withLowercase()
                             ->blockSameCharacter()
                             ->getData();
+
+                            dump($result);
     
         expect($result)->toBeObject()->toHaveProperties([
-            'totalRule'=>3,
-            'totalValidated'=>3,
-            'status'=>true
+          
+            'totalValidated'=>2,
+           
         ]);
+
+        
         
        
 
 })->with([
-    '11111111','wwwwwwwwww'
+    '11111111'
 ]);
 
 

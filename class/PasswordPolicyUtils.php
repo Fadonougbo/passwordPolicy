@@ -13,13 +13,15 @@ abstract class PasswordPolicyUtils {
      * @param string $data
      * @return string
      */
-    protected static function  getAllCharRegex(string $data):string {
+    protected static function  getAllCharRegex(int $repeat,string $data):string {
 
         $splitData=preg_split('/\B/',$data);
 
-        $regex=array_map(function($char) {
+        $regex=array_map(function($char) use($repeat) {
 
-            return "^$char{2,}$";
+            $quantifier="{".$repeat.",}";
+
+            return "^.*$char{$quantifier}.*$";
 
         },$splitData);
 
@@ -27,7 +29,14 @@ abstract class PasswordPolicyUtils {
 
     }
 
-    public function parameterVerification(int $min,?int $max=null) {
+    /**
+     * Throw PasswordPolicyException if $min|$max value is not correct
+     *
+     * @param integer $min
+     * @param integer|null $max
+     * @return void
+     */
+    protected function parameterVerification(int $min,?int $max=null) {
 
         $maxExist=$max!==null;
 
@@ -48,6 +57,51 @@ abstract class PasswordPolicyUtils {
          }
 
     }
+
+    protected function passwordRepeatCharacterVerification(int $repeat) {
+
+        if($repeat<3) {
+            throw new PasswordPolicyException("The number of repetitions cannot be less than 3");
+         }
+
+    }
+
+    
+    /**
+     * Throw PasswordPolicyException if password is not correct
+     *
+     * @param integer $min
+     * @param integer|null $max
+     *
+     */
+    protected function passwordLengthVerification(int $min,?int $max=null) {
+
+        $maxExist=$max!==null;
+
+         if($min<4) {
+            throw new PasswordPolicyException("The password cannot be less than 4 characteres");
+         }
+ 
+         if($maxExist && ($min>$max) ) {
+             
+             throw new PasswordPolicyException("The max parameter value cannot be less than min value");
+             
+         }
+ 
+         if($maxExist && ($max<4) ) {
+             
+             throw new PasswordPolicyException("The password cannot be less than 4 characteres");
+             
+         }
+
+    }
+
+    public function ruleAlreadyUsed(string $name,array $arr):bool {
+
+        return in_array($name,$arr);
+
+    }
+
 
 }
 

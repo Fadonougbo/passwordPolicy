@@ -5,15 +5,15 @@ namespace PasswordPolicy;
 
 class PasswordPolicy extends PasswordPolicyUtils {
 
-    
-
     private int $id=0;
-
-    private int $totalRule=0;
 
     private array $messages=[];
 
-    public function __construct(private string $secret) {
+    private array $ruleAlreadyUsedList=[];
+
+    private ?int $passwordLength=null;
+
+    public function __construct(private string $password) {
 
 
     }
@@ -29,30 +29,37 @@ class PasswordPolicy extends PasswordPolicyUtils {
       */
     public function withSymbol(int $min=0,?int $max=null,?string $message=null):self {
 
+        
+        if($this->ruleAlreadyUsed('withSymbol',$this->ruleAlreadyUsedList)) {
+            return $this;
+        }
+        $this->ruleAlreadyUsedList[]='withSymbol';
 
-        $this->incrementTotalRule();
+        //Exception Generator
+        $this->parameterVerification($min,$max);
 
         $maxExist=$max!==null;
 
-        $this->parameterVerification($min,$max);
-
-
-        preg_match_all('/[\W_]/',$this->secret,$matches);
-        
+        //Rule pattern
+        preg_match_all('/[\W_]/',$this->password,$matches);
 
         $symbolList=$matches[0];
        
         $minCase=!$maxExist&& count($symbolList)>=$min;
         $minmaxCase=$maxExist && count($symbolList)>=$min && count($symbolList)<=$max;
    
-
+        //Increment id if password valid this rule
         if($minCase||$minmaxCase) {
             $this->incrementId();
         }
 
+
+        //Return if password valid this rule
         if($this->getStatus()) {
             return $this;
         }
+
+        //Add message if password not valid this rule
 
         if(!empty($message)) {
 
@@ -86,14 +93,19 @@ class PasswordPolicy extends PasswordPolicyUtils {
       */
     public function withNumber(int $min=0,?int $max=null,?string $message=null):self {
 
-        $this->incrementTotalRule();
+        if($this->ruleAlreadyUsed('withNumber',$this->ruleAlreadyUsedList)) {
+            return $this;
+        }
+        $this->ruleAlreadyUsedList[]='withNumber';
+
 
         $maxExist=$max!==null;
 
+        //Exception generator
         $this->parameterVerification($min,$max);
 
-
-        preg_match_all('/[\d]/',$this->secret,$matches);
+        //Rule pattern
+        preg_match_all('/[\d]/',$this->password,$matches);
         
 
         $symbolList=$matches[0];
@@ -101,20 +113,21 @@ class PasswordPolicy extends PasswordPolicyUtils {
         $minCase=!$maxExist&& count($symbolList)>=$min;
         $minmaxCase=$maxExist && count($symbolList)>=$min && count($symbolList)<=$max;
    
-
+        //Increment id if password valid this rule
         if($minCase||$minmaxCase) {
             $this->incrementId();
         }
 
+        //Return if rule is validated
         if($this->getStatus()) {
             return $this;
         }
 
+        //Add message if error
         if(!empty($message)) {
 
             $this->messages['number']=$message;
 
-         
         }elseif($minCase||$max===1) {
 
             $this->messages['number']='the password must contain 1 number';
@@ -142,14 +155,20 @@ class PasswordPolicy extends PasswordPolicyUtils {
       */
     public function withLowercase(int $min=0,?int $max=null,?string $message=null):self {
 
-        $this->incrementTotalRule();
+        if($this->ruleAlreadyUsed('withLowercase',$this->ruleAlreadyUsedList)) {
+            return $this;
+        }
+
+        $this->ruleAlreadyUsedList[]='withLowercase';
+
 
         $maxExist=$max!==null;
 
+        //Exception generator
         $this->parameterVerification($min,$max);
 
-
-        preg_match_all('/[a-z]/',$this->secret,$matches);
+        //rule pattern
+        preg_match_all('/[a-z]/',$this->password,$matches);
         
 
         $symbolList=$matches[0];
@@ -157,15 +176,18 @@ class PasswordPolicy extends PasswordPolicyUtils {
         $minCase=!$maxExist&& count($symbolList)>=$min;
         $minmaxCase=$maxExist && count($symbolList)>=$min && count($symbolList)<=$max;
    
-
+        //increment id if success
         if($minCase||$minmaxCase) {
             $this->incrementId();
         }
 
+        //return if success
         if($this->getStatus()) {
             return $this;
         }
 
+
+        //Add message if failure
         if(!empty($message)) {
 
             $this->messages['lowercase']=$message;
@@ -198,14 +220,21 @@ class PasswordPolicy extends PasswordPolicyUtils {
       */
     public function withUppercase(int $min=0,?int $max=null,?string $message=null):self {
 
-        $this->incrementTotalRule();
+        if($this->ruleAlreadyUsed('withUppercase',$this->ruleAlreadyUsedList)) {
+            return $this;
+        }
+
+        $this->ruleAlreadyUsedList[]='withUppercase';
+
 
         $maxExist=$max!==null;
 
+        //Exception generator
         $this->parameterVerification($min,$max);
 
 
-        preg_match_all('/[A-Z]/',$this->secret,$matches);
+        //Rule pattern
+        preg_match_all('/[A-Z]/',$this->password,$matches);
         
 
         $symbolList=$matches[0];
@@ -213,15 +242,18 @@ class PasswordPolicy extends PasswordPolicyUtils {
         $minCase=!$maxExist&& count($symbolList)>=$min;
         $minmaxCase=$maxExist && count($symbolList)>=$min && count($symbolList)<=$max;
    
-
+        //Increment id if success
         if($minCase||$minmaxCase) {
             $this->incrementId();
         }
 
+        //Return if status is true
         if($this->getStatus()) {
             return $this;
         }
 
+
+        //Add message if failure
         if(!empty($message)) {
 
             $this->messages['uppercase']=$message;
@@ -246,34 +278,45 @@ class PasswordPolicy extends PasswordPolicyUtils {
       * @param string|null $message
       * @return self
       */
-    public function blockSameCharacter(?string $message=null):self {
+    public function blockSameCharacter(int $repeat=5,?string $message=null):self {
 
+        if($this->ruleAlreadyUsed('blockSameCharacter',$this->ruleAlreadyUsedList)) {
+            return $this;
+        }
         
-        $this->incrementTotalRule();
+        $this->ruleAlreadyUsedList[]='blockSameCharacter';
+
+        //Exception Generator
+        $this->passwordRepeatCharacterVerification($repeat);
+
 
         $lowercaseLetter='abcdefghijklmnopqrstuvwxyz';
 
-        $lowercaseRegex="/".PasswordPolicyUtils::getAllCharRegex($lowercaseLetter)."/";
+        //Generate pattern for lowercase 
+        $lowercaseRegex="/".PasswordPolicyUtils::getAllCharRegex($repeat,$lowercaseLetter)."/";
+       
 
         $uppercaseLetter=strtoupper('abcdefghijklmnopqrstuvwxyz');
 
-        $uppercaseRegex="/".PasswordPolicyUtils::getAllCharRegex($uppercaseLetter)."/";
+        //Generate pattern for uppercase 
+        $uppercaseRegex="/".PasswordPolicyUtils::getAllCharRegex($repeat,$uppercaseLetter)."/";
 
 
-        $number='123456789';
+        $number='0123456789';
 
-        $numberRegex="/".PasswordPolicyUtils::getAllCharRegex($number)."/";
+        //Generate pattern for number 
+        $numberRegex="/".PasswordPolicyUtils::getAllCharRegex($repeat,$number)."/";
 
 
-        $lowercaseValidated=preg_match_all($lowercaseRegex,$this->secret);
+        $lowercaseValidated=preg_match_all($lowercaseRegex,$this->password);
 
-        $uppercaseValidated=preg_match_all($uppercaseRegex,$this->secret);
+        $uppercaseValidated=preg_match_all($uppercaseRegex,$this->password);
 
-        $numberValidated=preg_match_all($numberRegex,$this->secret);
+        $numberValidated=preg_match_all($numberRegex,$this->password,$matches);
 
-        
-
-        if($lowercaseValidated||$uppercaseValidated||$numberValidated) {
+        //Increment id if we have note repetiton of number,lowercase,uppercase
+        if(!$numberValidated&&!$uppercaseValidated&&!$lowercaseValidated) {
+            
             $this->incrementId();
         }
 
@@ -281,6 +324,8 @@ class PasswordPolicy extends PasswordPolicyUtils {
             return $this;
         }
 
+
+        //message
         if(!empty($message)) {
 
             $this->messages['same_character']=$message;
@@ -301,7 +346,12 @@ class PasswordPolicy extends PasswordPolicyUtils {
      */
     public function blockIf(callable|bool $param,?string $message=null):self {
 
-        $this->incrementTotalRule();
+        if($this->ruleAlreadyUsed('blockIf',$this->ruleAlreadyUsedList)) {
+            return $this;
+        }
+
+        $this->ruleAlreadyUsedList[]='blockIf';
+
 
         if(is_bool($param)) {
 
@@ -311,7 +361,7 @@ class PasswordPolicy extends PasswordPolicyUtils {
 
         }else {
 
-            $response=call_user_func($param,$this->secret);
+            $response=call_user_func($param,$this->password);
 
             if($response) {
                 $this->incrementId();
@@ -323,6 +373,8 @@ class PasswordPolicy extends PasswordPolicyUtils {
             return $this;
         }
 
+
+        //message
         if(!empty($message)) {
 
             $this->messages['blockReason']=$message;
@@ -342,12 +394,20 @@ class PasswordPolicy extends PasswordPolicyUtils {
      */
     public function blockCommonPasswords(?string $message=null):self {
 
-        $this->incrementTotalRule();
 
+        if($this->ruleAlreadyUsed('blockCommonPasswords',$this->ruleAlreadyUsedList)) {
+            return $this;
+        }
+
+        $this->ruleAlreadyUsedList[]='blockCommonPasswords';
+
+        
+        //Common password list
         $commonPassword='/(qwerty|azerty|qwerty|abc123|12345|1234567|123456,1234567890|12345678|jesus|iloveyou|admin|qwertyuiop|aa123456)|superman|mustang|password\d*/i';
 
-        $isValidated=preg_match_all($commonPassword,$this->secret);
+        $isValidated=preg_match_all($commonPassword,$this->password);
 
+        //increment id if we have not common passwords in user password
         if(!$isValidated) {
             $this->incrementId();
         }
@@ -375,19 +435,29 @@ class PasswordPolicy extends PasswordPolicyUtils {
      */
     public function blockListContent(array $list=[],?string $message=null):self {
 
-        if(empty($list)) {
+
+        if($this->ruleAlreadyUsed('blockListContent',$this->ruleAlreadyUsedList)) {
             return $this;
         }
 
-        $this->incrementTotalRule();
+        $this->ruleAlreadyUsedList[]='blockListContent';
+
+        
+
+        if(empty($list)) {
+            $this->incrementId();
+            return $this;
+        }
+
 
         $implodeList=implode('|',$list);
 
         $pattern="/".$implodeList."/";
 
 
-        $isValidated=preg_match_all($pattern,$this->secret,$matches);
+        $isValidated=preg_match_all($pattern,$this->password);
 
+        //increment id if we have not list passwords in user password
         if(!$isValidated) {
             $this->incrementId();
         }
@@ -405,6 +475,58 @@ class PasswordPolicy extends PasswordPolicyUtils {
         return $this;
     }
 
+    public function setLength(int $min=4,?int $max=null,?string $message=null) {
+
+        if($this->ruleAlreadyUsed('setLength',$this->ruleAlreadyUsedList)) {
+            return $this;
+        }
+        
+
+        $this->ruleAlreadyUsedList[]='setLength';
+
+        //Exception generator
+        $this->passwordLengthVerification($min,$max);
+
+        $maxExist=$max!==null;
+
+        $stringLength=strlen($this->password);
+        
+       
+        $case1=!$maxExist&& $stringLength>=$min;
+
+        $case2=$maxExist && $stringLength>=$min && $stringLength<=$max;
+   
+
+        if($case1||$case2) {
+            $this->incrementId();
+            $this->passwordLength=$stringLength;
+        }
+
+        if($this->getStatus()) {
+            return $this;
+        }
+
+
+        //message
+        if(!empty($message)) {
+
+            $this->messages['string_lenght']=$message;
+            
+        }elseif($case1||($min===$max)) {
+
+            $this->messages['string_lenght']="the password must contain $min characters";
+
+        }else {
+            
+            $this->messages['string_lenght']="the password must contain  $min  to $max characters";
+
+        }
+
+
+        return $this;
+
+    }
+
     
     /**
      * Return password verification status
@@ -412,8 +534,8 @@ class PasswordPolicy extends PasswordPolicyUtils {
      * @return boolean
      */
     public function getStatus():bool {
-        
-        return $this->getId()===$this->getTotalRule();
+       
+        return $this->getId()===count($this->ruleAlreadyUsedList);
     }
 
     /**
@@ -421,27 +543,9 @@ class PasswordPolicy extends PasswordPolicyUtils {
      *
      * @return array
      */
-    public function getMessages():array {
+    private function getMessages():array {
         return $this->messages;
     }
-
-    /**
-     *Increment if one rule is used
-     * @return void
-     */
-    private function incrementTotalRule() {
-        $this->totalRule+=1;
-    }
-
-    /**
-     * Total rull used
-     *
-     * @return integer
-     */
-    private function getTotalRule():int {
-        return $this->totalRule;
-    }
-
 
     /**
      * Increment if rule is valide
@@ -450,6 +554,15 @@ class PasswordPolicy extends PasswordPolicyUtils {
      */
     private function incrementId() {
         $this->id+=1;
+    }
+
+    /**
+     * Get password length
+     *
+     * 
+     */
+    private function getPasswordLength() {
+        return !empty($this->passwordLength)?$this->passwordLength:strlen($this->password);
     }
 
     /**
@@ -467,9 +580,9 @@ class PasswordPolicy extends PasswordPolicyUtils {
      *
      * @return string
      */
-    public function getSecret():string {
+    public function getPassword():string {
 
-        return $this->secret;
+        return $this->password;
     }
 
     /**
@@ -479,13 +592,15 @@ class PasswordPolicy extends PasswordPolicyUtils {
      */
     public function getData():DataBag {
 
-        $totalRule=$this->getTotalRule();
+        $totalRule=count($this->ruleAlreadyUsedList);
         $valideRule=$this->getId();
         $status=$this->getStatus();
-        $secret=$this->getSecret();
+        $secret=$this->getPassword();
         $messages=$this->getMessages();
+        $lenght=$this->getPasswordLength();
+        
 
-        return (new DataBag($totalRule,$valideRule,$status,$secret,$messages));
+        return (new DataBag($totalRule,$valideRule,$status,$secret,$messages,$lenght));
 
     }
 
