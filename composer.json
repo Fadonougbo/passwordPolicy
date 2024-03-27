@@ -1,26 +1,28 @@
 {
-    "name": "gautier/password-policy",
+    "name": "fadonougbo/password-policy",
+    "description": "Password validation Library",
+    "keywords": ["password", "validation", "policy"],
+    "license": "MIT",
+    "type": "library",
+    "homepage": "https://github.com/Fadonougbo/passwordPolicy",
     "autoload": {
         "psr-4": {
-            "PasswordPolicy\\": "class/",
+            "PasswordPolicy\\": "class/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
             "PasswordPolicyException\\":"exception/"
         }
     },
     "authors": [
         {
             "name": "Fadonougbo",
-            "email": "fadougbogautier@gmail.com"
+            "email": "fadougbogautier@gmail.com",
+            "homepage": ""
         }
     ],
     "require-dev": {
         "pestphp/pest": "^2.34"
-    },
-    "config": {
-        "allow-plugins": {
-            "pestphp/pest-plugin": true
-        }
-    },
-    "require": {
-        "symfony/var-dumper": "^7.0"
     }
 }
