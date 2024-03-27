@@ -6,14 +6,13 @@ use PasswordPolicyException\PasswordPolicyException;
 
 abstract class PasswordPolicyUtils {
 
-
     /**
      * Explode data and return  regex for each charater 
      *
      * @param string $data
      * @return string
      */
-    protected static function  getAllCharRegex(int $repeat,string $data):string {
+    protected  function  getAllCharRegex(int $repeat,string $data):string {
 
         $splitData=preg_split('/\B/',$data);
 
@@ -34,7 +33,7 @@ abstract class PasswordPolicyUtils {
      *
      * @param integer $min
      * @param integer|null $max
-     * @return void
+     * 
      */
     protected function parameterVerification(int $min,?int $max=null) {
 
@@ -58,6 +57,12 @@ abstract class PasswordPolicyUtils {
 
     }
 
+    /**
+     * 
+     *
+     * @param integer $repeat
+     * 
+     */
     protected function passwordRepeatCharacterVerification(int $repeat) {
 
         if($repeat<3) {
@@ -96,7 +101,14 @@ abstract class PasswordPolicyUtils {
 
     }
 
-    public function ruleAlreadyUsed(string $name,array $arr):bool {
+    /**
+     * 
+     *
+     * @param string $name
+     * @param array $arr
+     * @return boolean
+     */
+    protected function ruleAlreadyUsed(string $name,array $arr):bool {
 
         return in_array($name,$arr);
 

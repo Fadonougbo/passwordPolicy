@@ -11,13 +11,13 @@ class PasswordPolicy extends PasswordPolicyUtils {
 
     private array $ruleAlreadyUsedList=[];
 
+    private array $ruleValidated=[];
+
     private ?int $passwordLength=null;
 
     public function __construct(private string $password) {
 
-
     }
-
 
      /**
       * Validates the presence of zero or more symbol.
@@ -30,58 +30,52 @@ class PasswordPolicy extends PasswordPolicyUtils {
     public function withSymbol(int $min=0,?int $max=null,?string $message=null):self {
 
         
-        if($this->ruleAlreadyUsed('withSymbol',$this->ruleAlreadyUsedList)) {
+        if(in_array('withSymbol',$this->ruleAlreadyUsedList)) {
             return $this;
         }
+        
         $this->ruleAlreadyUsedList[]='withSymbol';
 
         //Exception Generator
         $this->parameterVerification($min,$max);
 
-        $maxExist=$max!==null;
 
-        //Rule pattern
-        preg_match_all('/[\W_]/',$this->password,$matches);
+        $response=WithMethodValidator::check([
+            'min'=>$min,
+            'max'=>$max,
+            'pattern'=>"/[\W_]/",
+            'password'=>$this->password
+        ]);
 
-        $symbolList=$matches[0];
        
-        $minCase=!$maxExist&& count($symbolList)>=$min;
-        $minmaxCase=$maxExist && count($symbolList)>=$min && count($symbolList)<=$max;
-   
         //Increment id if password valid this rule
-        if($minCase||$minmaxCase) {
+        if($response['isValidated']) {
             $this->incrementId();
+            $this->ruleValidated[]='withSymbol';
         }
 
 
         //Return if password valid this rule
-        if($this->getStatus()) {
+        if(in_array('withSymbol',$this->ruleValidated)) {
             return $this;
         }
 
         //Add message if password not valid this rule
+        $errorMessage=WithMethodValidator::getErrorMessage($message,[
+            'max'=>$max,
+            'min'=>$min,
+            'm'=>$min>1?'special characters':'special character',
+            'matchCount'=>$response['matchCount']
+        ]);
 
-        if(!empty($message)) {
-
-            $this->messages['symbol']=$message;
-
-            return $this;
-
-        }elseif($minCase||$max===1) {
-
-            $this->messages['symbol']='the password must contain 1 special character';
-
-        }else {
-           
-            $this->messages['symbol']="the password must contain  $min  to $max special characters";
-
+        
+        if(!empty($errorMessage)) {
+            $this->messages['symbol']=$errorMessage;
         }
-
 
         return $this;
 
     }
-
 
      /**
       * Validates the presence of zero or more numbers .
@@ -98,44 +92,39 @@ class PasswordPolicy extends PasswordPolicyUtils {
         }
         $this->ruleAlreadyUsedList[]='withNumber';
 
-
-        $maxExist=$max!==null;
-
         //Exception generator
         $this->parameterVerification($min,$max);
 
-        //Rule pattern
-        preg_match_all('/[\d]/',$this->password,$matches);
-        
 
-        $symbolList=$matches[0];
-       
-        $minCase=!$maxExist&& count($symbolList)>=$min;
-        $minmaxCase=$maxExist && count($symbolList)>=$min && count($symbolList)<=$max;
+        $response=WithMethodValidator::check([
+            'min'=>$min,
+            'max'=>$max,
+            'pattern'=>'/[\d]/',
+            'password'=>$this->password
+        ]);
    
         //Increment id if password valid this rule
-        if($minCase||$minmaxCase) {
+        if($response['isValidated']) {
             $this->incrementId();
+            $this->ruleValidated[]='withNumber';
         }
 
         //Return if rule is validated
-        if($this->getStatus()) {
+        if(in_array('withNumber',$this->ruleValidated)) {
             return $this;
         }
 
-        //Add message if error
-        if(!empty($message)) {
+        //Add message if password not valid this rule
+        $errorMessage=WithMethodValidator::getErrorMessage($message,[
+            'max'=>$max,
+            'min'=>$min,
+            'm'=>$min>1?'numbers':'number',
+            'matchCount'=>$response['matchCount']
+        ]);
 
-            $this->messages['number']=$message;
-
-        }elseif($minCase||$max===1) {
-
-            $this->messages['number']='the password must contain 1 number';
-
-        }else {
-            
-            $this->messages['number']="the password must contain  $min  to $max numbers";
-
+        
+        if(!empty($errorMessage)) {
+            $this->messages['withNumber']=$errorMessage;
         }
 
         return $this;
@@ -143,7 +132,6 @@ class PasswordPolicy extends PasswordPolicyUtils {
 
     }
 
-   
  
      /**
       * Validates the presence of zero or more lowercase .
@@ -160,55 +148,49 @@ class PasswordPolicy extends PasswordPolicyUtils {
         }
 
         $this->ruleAlreadyUsedList[]='withLowercase';
-
-
-        $maxExist=$max!==null;
+     
 
         //Exception generator
         $this->parameterVerification($min,$max);
-
-        //rule pattern
-        preg_match_all('/[a-z]/',$this->password,$matches);
         
 
-        $symbolList=$matches[0];
-       
-        $minCase=!$maxExist&& count($symbolList)>=$min;
-        $minmaxCase=$maxExist && count($symbolList)>=$min && count($symbolList)<=$max;
-   
+        $response=WithMethodValidator::check([
+            'min'=>$min,
+            'max'=>$max,
+            'pattern'=>'/[a-z]/',
+            'password'=>$this->password
+        ]);
+
         //increment id if success
-        if($minCase||$minmaxCase) {
+        if($response['isValidated']) {
             $this->incrementId();
+            $this->ruleValidated[]='withLowercase';
         }
 
         //return if success
-        if($this->getStatus()) {
+        
+        if(in_array('withLowercase',$this->ruleValidated)) {
             return $this;
         }
 
 
-        //Add message if failure
-        if(!empty($message)) {
+       //Add message if password not valid this rule
+       $errorMessage=WithMethodValidator::getErrorMessage($message,[
+            'max'=>$max,
+            'min'=>$min,
+            'm'=>$min>1?'lowercase letters':'lowercase letter',
+            'matchCount'=>$response['matchCount']
+        ]);
 
-            $this->messages['lowercase']=$message;
-            
-        }elseif($minCase||$max===1) {
-
-            $this->messages['lowercase']='the password must contain 1 lowercase';
-
-        }else {
-            
-            $this->messages['lowercase']="the password must contain  $min  to $max lowercase";
-
+        
+        if(!empty($errorMessage)) {
+            $this->messages['withLowercase']=$errorMessage;
         }
-
 
         return $this;
 
     }
 
-    
- 
 
      /**
       * Validates the presence of zero or more uppercase
@@ -226,46 +208,39 @@ class PasswordPolicy extends PasswordPolicyUtils {
 
         $this->ruleAlreadyUsedList[]='withUppercase';
 
-
-        $maxExist=$max!==null;
-
         //Exception generator
         $this->parameterVerification($min,$max);
 
-
-        //Rule pattern
-        preg_match_all('/[A-Z]/',$this->password,$matches);
-        
-
-        $symbolList=$matches[0];
-       
-        $minCase=!$maxExist&& count($symbolList)>=$min;
-        $minmaxCase=$maxExist && count($symbolList)>=$min && count($symbolList)<=$max;
+        $response=WithMethodValidator::check([
+            'min'=>$min,
+            'max'=>$max,
+            'pattern'=>'/[A-Z]/',
+            'password'=>$this->password
+        ]);
    
         //Increment id if success
-        if($minCase||$minmaxCase) {
+        if($response['isValidated']) {
             $this->incrementId();
+            $this->ruleValidated[]='withUppercase';
         }
 
         //Return if status is true
-        if($this->getStatus()) {
+        if(in_array('withUppercase',$this->ruleValidated)) {
             return $this;
         }
 
 
-        //Add message if failure
-        if(!empty($message)) {
+        //Add message if password not valid this rule
+       $errorMessage=WithMethodValidator::getErrorMessage($message,[
+            'max'=>$max,
+            'min'=>$min,
+            'm'=>$min>1?'uppercase letters':'uppercase letter',
+            'matchCount'=>$response['matchCount']
+        ]);
 
-            $this->messages['uppercase']=$message;
-
-        }elseif($minCase||$max===1) {
-
-            $this->messages['uppercase']='the password must contain 1 uppercase';
-
-        }else {
-            
-            $this->messages['uppercase']="the password must contain  $min  to $max lowercase";
-
+        
+        if(!empty($errorMessage)) {
+            $this->messages['withUppercase']=$errorMessage;
         }
 
         return $this;
@@ -293,20 +268,21 @@ class PasswordPolicy extends PasswordPolicyUtils {
         $lowercaseLetter='abcdefghijklmnopqrstuvwxyz';
 
         //Generate pattern for lowercase 
-        $lowercaseRegex="/".PasswordPolicyUtils::getAllCharRegex($repeat,$lowercaseLetter)."/";
+        $lowercaseRegex="/".$this->getAllCharRegex($repeat,$lowercaseLetter)."/";
        
 
         $uppercaseLetter=strtoupper('abcdefghijklmnopqrstuvwxyz');
 
         //Generate pattern for uppercase 
-        $uppercaseRegex="/".PasswordPolicyUtils::getAllCharRegex($repeat,$uppercaseLetter)."/";
+        $uppercaseRegex="/".$this->getAllCharRegex($repeat,$uppercaseLetter)."/";
 
 
         $number='0123456789';
 
         //Generate pattern for number 
-        $numberRegex="/".PasswordPolicyUtils::getAllCharRegex($repeat,$number)."/";
+        $numberRegex="/".$this->getAllCharRegex($repeat,$number)."/";
 
+        //$symbol="`~!@#$%^&*()_+=-][{}\|';\",.></?";
 
         $lowercaseValidated=preg_match_all($lowercaseRegex,$this->password);
 
@@ -318,9 +294,10 @@ class PasswordPolicy extends PasswordPolicyUtils {
         if(!$numberValidated&&!$uppercaseValidated&&!$lowercaseValidated) {
             
             $this->incrementId();
+            $this->ruleValidated[]='blockSameCharacter';
         }
 
-        if($this->getStatus()) {
+        if(in_array('blockSameCharacter',$this->ruleValidated)) {
             return $this;
         }
 
@@ -329,10 +306,12 @@ class PasswordPolicy extends PasswordPolicyUtils {
         if(!empty($message)) {
 
             $this->messages['same_character']=$message;
+            return $this;
 
-        }else {
-            $this->messages['same_character']='you cannot use the same letter or number multiple times';
         }
+
+        $this->messages['same_character']="you cannot use the same letter or number more than {$repeat} times";
+        
 
         return $this;
     }
@@ -357,6 +336,7 @@ class PasswordPolicy extends PasswordPolicyUtils {
 
             if($param) {
                 $this->incrementId();
+                $this->ruleValidated[]='blockIf';
             }
 
         }else {
@@ -365,11 +345,12 @@ class PasswordPolicy extends PasswordPolicyUtils {
 
             if($response) {
                 $this->incrementId();
+                $this->ruleValidated[]='blockIf';
             }
 
         }
 
-        if($this->getStatus()) {
+        if(in_array('blockIf',$this->ruleValidated)) {
             return $this;
         }
 
@@ -377,15 +358,18 @@ class PasswordPolicy extends PasswordPolicyUtils {
         //message
         if(!empty($message)) {
 
-            $this->messages['blockReason']=$message;
+            $this->messages['block_reason']=$message;
+
+            return $this;
 
         }
+            
+        $this->messages['block_reason']="Password not accepted";
 
         return $this;
 
     }
 
-     
     /**
      * Block common password
      *
@@ -401,7 +385,6 @@ class PasswordPolicy extends PasswordPolicyUtils {
 
         $this->ruleAlreadyUsedList[]='blockCommonPasswords';
 
-        
         //Common password list
         $commonPassword='/(qwerty|azerty|qwerty|abc123|12345|1234567|123456,1234567890|12345678|jesus|iloveyou|admin|qwertyuiop|aa123456)|superman|mustang|password\d*/i';
 
@@ -410,17 +393,21 @@ class PasswordPolicy extends PasswordPolicyUtils {
         //increment id if we have not common passwords in user password
         if(!$isValidated) {
             $this->incrementId();
+            $this->ruleValidated[]='blockCommonPasswords';
         }
 
-        if($this->getStatus()) {
+        if(in_array('blockCommonPasswords',$this->ruleValidated)) {
             return $this;
         }
 
         if(!empty($message)) {
 
             $this->messages['common_password']=$message;
-
+            return $this;
         }
+            
+        $this->messages['common_password']="The password used is easy";
+        
 
         return $this;
 
@@ -446,6 +433,7 @@ class PasswordPolicy extends PasswordPolicyUtils {
 
         if(empty($list)) {
             $this->incrementId();
+            $this->ruleValidated[]='blockListContent';
             return $this;
         }
 
@@ -460,16 +448,27 @@ class PasswordPolicy extends PasswordPolicyUtils {
         //increment id if we have not list passwords in user password
         if(!$isValidated) {
             $this->incrementId();
+            $this->ruleValidated[]='blockListContent';
+            
         }
 
-        if($this->getStatus()) {
+        if(in_array('blockListContent',$this->ruleValidated)) {
             return $this;
         }
 
         if(!empty($message)) {
 
-            $this->messages['contain']=$message;
+            $this->messages['block_list_content']=$message;
 
+        }else {
+            $implodeList=implode(';',$list);
+
+            if(count($list)>1) {
+                $this->messages['block_list_content']="The following words are not accepted in the password: {$implodeList}";
+            }else {
+                $this->messages['block_list_content']="The following word is not accepted in the password: {$implodeList}";
+            }
+            
         }
 
         return $this;
@@ -489,39 +488,45 @@ class PasswordPolicy extends PasswordPolicyUtils {
 
         $maxExist=$max!==null;
 
-        $stringLength=strlen($this->password);
+        $stringLength=mb_strlen($this->password);
         
        
         $case1=!$maxExist&& $stringLength>=$min;
 
         $case2=$maxExist && $stringLength>=$min && $stringLength<=$max;
    
-
         if($case1||$case2) {
             $this->incrementId();
+            $this->ruleValidated[]='setLength';
             $this->passwordLength=$stringLength;
         }
 
-        if($this->getStatus()) {
+        if(in_array('setLength',$this->ruleValidated)) {
             return $this;
         }
 
 
         //message
-        if(!empty($message)) {
+  
 
-            $this->messages['string_lenght']=$message;
-            
-        }elseif($case1||($min===$max)) {
+        $message=match(true) {
+            !empty($message)=>$message,
 
-            $this->messages['string_lenght']="the password must contain $min characters";
+            ($stringLength>$max&&$maxExist)=>"the password must contain  $min to $max  characters",
 
-        }else {
-            
-            $this->messages['string_lenght']="the password must contain  $min  to $max characters";
+            ($stringLength===$min&&$min===$max)=>"the password must contain  $min characters",
 
+            ($stringLength<$min&&!$maxExist)=>"the password must contain minimum $min characters",
+
+            ($stringLength<$min&&$maxExist)=>"the password must contain  $min to $max characters",
+
+            default=>'error'
+        };
+
+
+        if($message) {
+            $this->messages['string_length']=$message;
         }
-
 
         return $this;
 
@@ -562,7 +567,7 @@ class PasswordPolicy extends PasswordPolicyUtils {
      * 
      */
     private function getPasswordLength() {
-        return !empty($this->passwordLength)?$this->passwordLength:strlen($this->password);
+        return !empty($this->passwordLength)?$this->passwordLength:mb_strlen($this->password);
     }
 
     /**
@@ -595,19 +600,15 @@ class PasswordPolicy extends PasswordPolicyUtils {
         $totalRule=count($this->ruleAlreadyUsedList);
         $valideRule=$this->getId();
         $status=$this->getStatus();
-        $secret=$this->getPassword();
+        $password=$this->getPassword();
         $messages=$this->getMessages();
         $lenght=$this->getPasswordLength();
         
-
-        return (new DataBag($totalRule,$valideRule,$status,$secret,$messages,$lenght));
+        return (new DataBag($totalRule,$valideRule,$status,$password,$messages,$lenght));
 
     }
 
-
  }
-
- 
 
 
 ?>
