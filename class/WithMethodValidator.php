@@ -41,7 +41,9 @@ class WithMethodValidator {
 
             $data['matchCount']<$data['min']=>"the password must contain minimum {$data['min']} {$data['m']}",
 
-            ($data['matchCount']>$data['max']&&!empty($max))=>"the password must contain {$data['min']}  to {$data['max']} {$data['m']}",
+            ($data['matchCount']>$data['max']&&!empty($data['max']))=>"the password must contain {$data['min']}  to {$data['max']} {$data['m']}",
+
+           
 
             default=>'error'
 

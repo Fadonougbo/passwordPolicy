@@ -132,7 +132,6 @@ class PasswordPolicy extends PasswordPolicyUtils {
 
     }
 
- 
      /**
       * Validates the presence of zero or more lowercase .
       *
@@ -343,7 +342,7 @@ class PasswordPolicy extends PasswordPolicyUtils {
 
             $response=call_user_func($param,$this->password);
 
-            if($response) {
+            if(is_bool($response)&&$response) {
                 $this->incrementId();
                 $this->ruleValidated[]='blockIf';
             }

@@ -7,22 +7,18 @@
     "homepage": "https://github.com/Fadonougbo/passwordPolicy",
     "autoload": {
         "psr-4": {
-            "PasswordPolicy\\": "class/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
+            "PasswordPolicy\\": "class/",
             "PasswordPolicyException\\":"exception/"
         }
-    },
+        },
     "authors": [
         {
             "name": "Fadonougbo",
-            "email": "fadougbogautier@gmail.com",
-            "homepage": ""
+            "email": "fadougbogautier@gmail.com"
         }
     ],
     "require-dev": {
         "pestphp/pest": "^2.34"
     }
+  
 }

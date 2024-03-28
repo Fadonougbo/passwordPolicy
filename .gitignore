@@ -1,6 +1,11 @@
 vendor
 helper.txt
 .vscode
+composer.lock
 index.php
 old.php
 composer copy.json
+composer3.json 
+composer4.json
+c.json
+essai.php
