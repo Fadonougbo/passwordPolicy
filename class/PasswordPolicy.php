@@ -1,6 +1,7 @@
 <?php 
 
 namespace PasswordPolicy;
+use PasswordPolicyException\PasswordPolicyException;
 
 
 class PasswordPolicy extends PasswordPolicyUtils {
@@ -331,18 +332,20 @@ class PasswordPolicy extends PasswordPolicyUtils {
         $this->ruleAlreadyUsedList[]='blockIf';
 
 
-        if(is_bool($param)) {
-
-            if($param) {
+        if(is_bool($param)&&$param) {
                 $this->incrementId();
                 $this->ruleValidated[]='blockIf';
-            }
 
         }else {
 
             $response=call_user_func($param,$this->password);
 
-            if(is_bool($response)&&$response) {
+            if(!is_bool($response)) {
+                throw new PasswordPolicyException('The blockIf method must return a boolean.');
+            }
+
+            
+            if($response) {
                 $this->incrementId();
                 $this->ruleValidated[]='blockIf';
             }

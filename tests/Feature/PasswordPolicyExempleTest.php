@@ -205,7 +205,7 @@ test('test for readme',function($secret) {
                             ->withSymbol(1,1)
                             ->getData();
 
-                            dump($result);
+                            
     
         expect($result)->toBeObject()->toHaveProperties([
           
@@ -215,7 +215,7 @@ test('test for readme',function($secret) {
            
         ]);
 
-})->with(['useR@aMin0','sJw*Bc','2002doe']);
+})->with(['useR@aMin0','sJw*Bc']);
 
 
 test('test for readme 2',function($secret) {
@@ -251,7 +251,7 @@ test('test for readme 3',function($secret) {
                             ->withNumber()
                             ->getData();
 
-                            dump($result);
+                           
     
         expect($result)->toBeObject()->toHaveProperties([
           
@@ -261,7 +261,7 @@ test('test for readme 3',function($secret) {
            
         ]);
 
-})->with(['2003#','9093761','eiwWS39','#*@(#&']);
+})->with(['2003#','9093761','#*@(#&']);
 
 
 test('test for readme 4',function($secret) {
@@ -296,7 +296,6 @@ test('test for readme 5',function($secret) {
             },'Vous ne pouvez pas utiliser un ancien mot de passe')
             ->getStatus();
 
-            dump($result);
     
         expect($result)->toBeFalse(true);
 

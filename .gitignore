@@ -7,5 +7,6 @@ old.php
 composer copy.json
 composer3.json 
 composer4.json
+composer.lock
 c.json
 essai.php
