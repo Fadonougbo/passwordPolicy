@@ -299,7 +299,7 @@ test('test for readme 5',function($secret) {
     
         expect($result)->toBeFalse(true);
 
-})->with(['ok'])->only();
+})->with(['ok']);
 
 
 
