@@ -4,7 +4,7 @@ use PasswordPolicy\PasswordPolicy;
 
 describe('withNumber test',function() {
 
-    test('word with one number letter: normal case', function (string $secret) {
+    test('word with one number : normal case', function (string $secret) {
 
         $passwordPolicy=new PasswordPolicy($secret);
 

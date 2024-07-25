@@ -16,13 +16,13 @@ abstract class PasswordPolicyUtils {
       */
     public static  function  getAllCharRegex(int $repeat,string $data):string {
 
-        $splitData=preg_split('/\B/',$data);
+        $splitData=preg_split('/\B/',$data);//ex abc=>[a,b,c]
 
         $regex=array_map(function($char) use($repeat) {
 
-            $quantifier="{".$repeat.",}";
+            $quantifier="{".$repeat.",}";//ex {3,}
 
-            return "^.*$char{$quantifier}.*$";
+            return "^(.*)$char{$quantifier}(.*)$"; // ex ^.*A{3,}.*$
 
         },$splitData);
 
@@ -39,7 +39,7 @@ abstract class PasswordPolicyUtils {
      */
     public static function parameterVerification(int $min,?int $max=null) {
 
-        $maxExist=$max!==null;
+        $maxExist=!empty($max);
 
          if($min<0) {
             throw new PasswordPolicyException("The min parameter value cannot be less than zero");
@@ -103,19 +103,7 @@ abstract class PasswordPolicyUtils {
 
     }
 
-    /**
-     * 
-     *
-     * @param string $name
-     * @param array $arr
-     * @return boolean
-     */
-    /* protected  function ruleAlreadyUsed(string $name,array $arr):bool {
 
-        return in_array($name,$arr);
-
-    }
- */
 
 }
 

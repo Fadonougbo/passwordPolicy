@@ -20,6 +20,7 @@ class PasswordPolicy  {
 
     }
 
+
      /**
       * Validates the presence of zero or more symbol.
       *
@@ -30,17 +31,18 @@ class PasswordPolicy  {
       */
     public function withSymbol(int $min=0,?int $max=null,?string $message=null):self {
 
-        
+        //If rule id Already used return this
         if(in_array('withSymbol',$this->ruleAlreadyUsedList)) {
             return $this;
         }
         
+        //Add rule in already used rule array
         $this->ruleAlreadyUsedList[]='withSymbol';
 
         //Exception Generator
         PasswordPolicyUtils::parameterVerification($min,$max);
 
-
+        //Password validation
         $response=WithMethodValidator::check([
             'min'=>$min,
             'max'=>$max,
@@ -52,7 +54,7 @@ class PasswordPolicy  {
         //Increment id if password valid this rule
         if($response['isValidated']) {
             $this->incrementId();
-            $this->ruleValidated[]='withSymbol';
+            $this->ruleValidated[]='withSymbol'; //Add rule in validate rules array
         }
 
 
@@ -61,7 +63,7 @@ class PasswordPolicy  {
             return $this;
         }
 
-        //Add message if password not valid this rule
+        //Get error message if password not valid this rule
         $errorMessage=WithMethodValidator::getErrorMessage($message,[
             'max'=>$max,
             'min'=>$min,
@@ -71,7 +73,7 @@ class PasswordPolicy  {
 
         
         if(!empty($errorMessage)) {
-            $this->messages['symbol']=$errorMessage;
+            $this->messages['symbol']=$errorMessage; //Add message in error message array
         }
 
         return $this;
@@ -88,22 +90,27 @@ class PasswordPolicy  {
       */
     public function withNumber(int $min=0,?int $max=null,?string $message=null):self {
 
+        //If rule id Already used return this
         if(in_array('withNumber',$this->ruleAlreadyUsedList)) {
             return $this;
         }
+
+        //Add rule in already used rule array
         $this->ruleAlreadyUsedList[]='withNumber';
 
         //Exception generator
         PasswordPolicyUtils::parameterVerification($min,$max);
 
 
+         //Password validation
         $response=WithMethodValidator::check([
             'min'=>$min,
             'max'=>$max,
             'pattern'=>'/[\d]/',
             'password'=>$this->password
         ]);
-   
+
+       
         //Increment id if password valid this rule
         if($response['isValidated']) {
             $this->incrementId();
@@ -143,10 +150,12 @@ class PasswordPolicy  {
       */
     public function withLowercase(int $min=0,?int $max=null,?string $message=null):self {
 
+        //If rule id Already used return this
         if(in_array('withLowercase',$this->ruleAlreadyUsedList)) {
             return $this;
         }
 
+        //Increment id if password valid this rule
         $this->ruleAlreadyUsedList[]='withLowercase';
      
 
@@ -201,7 +210,8 @@ class PasswordPolicy  {
       * @return self
       */
     public function withUppercase(int $min=0,?int $max=null,?string $message=null):self {
-
+        
+        //If rule id Already used return this
         if(in_array('withUppercase',$this->ruleAlreadyUsedList)) {
             return $this;
         }
@@ -253,8 +263,9 @@ class PasswordPolicy  {
       * @param string|null $message
       * @return self
       */
-    public function blockSameCharacter(int $repeat=5,?string $message=null):self {
-
+    public function blockSameCharacter(int $repeatMin=5,?string $message=null):self {
+        
+        //If rule id Already used return this
         if(in_array('blockSameCharacter',$this->ruleAlreadyUsedList)) {
             return $this;
         }
@@ -262,25 +273,25 @@ class PasswordPolicy  {
         $this->ruleAlreadyUsedList[]='blockSameCharacter';
 
         //Exception Generator
-        PasswordPolicyUtils::passwordRepeatCharacterVerification($repeat);
+        PasswordPolicyUtils::passwordRepeatCharacterVerification($repeatMin);
 
 
         $lowercaseLetter='abcdefghijklmnopqrstuvwxyz';
 
         //Generate pattern for lowercase 
-        $lowercaseRegex="/".PasswordPolicyUtils::getAllCharRegex($repeat,$lowercaseLetter)."/";
+        $lowercaseRegex="/".PasswordPolicyUtils::getAllCharRegex($repeatMin,$lowercaseLetter)."/";
        
 
         $uppercaseLetter=strtoupper('abcdefghijklmnopqrstuvwxyz');
 
         //Generate pattern for uppercase 
-        $uppercaseRegex="/".PasswordPolicyUtils::getAllCharRegex($repeat,$uppercaseLetter)."/";
+        $uppercaseRegex="/".PasswordPolicyUtils::getAllCharRegex($repeatMin,$uppercaseLetter)."/";
 
 
         $number='0123456789';
 
         //Generate pattern for number 
-        $numberRegex="/".PasswordPolicyUtils::getAllCharRegex($repeat,$number)."/";
+        $numberRegex="/".PasswordPolicyUtils::getAllCharRegex($repeatMin,$number)."/";
 
         //$symbol="`~!@#$%^&*()_+=-][{}\|';\",.></?";
 
@@ -310,7 +321,7 @@ class PasswordPolicy  {
 
         }
 
-        $this->messages['same_character']="you cannot use the same letter or number more than {$repeat} times";
+        $this->messages['same_character']="you cannot use the same letter or number more than {$repeatMin} times";
         
 
         return $this;
@@ -324,7 +335,8 @@ class PasswordPolicy  {
      * @return self
      */
     public function blockIf(callable|bool $param,?string $message=null):self {
-
+        
+        //If rule id Already used return this
         if(in_array('blockIf',$this->ruleAlreadyUsedList)) {
             return $this;
         }
@@ -381,7 +393,8 @@ class PasswordPolicy  {
      */
     public function blockCommonPasswords(?string $message=null):self {
 
-
+        
+        //If rule id Already used return this
         if(in_array('blockCommonPasswords',$this->ruleAlreadyUsedList)) {
             return $this;
         }
@@ -389,7 +402,7 @@ class PasswordPolicy  {
         $this->ruleAlreadyUsedList[]='blockCommonPasswords';
 
         //Common password list
-        $commonPassword='/(qwerty|azerty|qwerty|abc123|12345|1234567|123456,1234567890|12345678|jesus|iloveyou|admin|qwertyuiop|aa123456)|superman|mustang|password\d*/i';
+        $commonPassword='/(qwerty|azerty|qwerty|abc123|12345|1234567|123456|1234567890|12345678|jesus|iloveyou|admin|qwertyuiop|aa123456)|superman|mustang|password\d*/i';
 
         $isValidated=preg_match_all($commonPassword,$this->password);
 
@@ -425,7 +438,7 @@ class PasswordPolicy  {
      */
     public function blockListContent(array $list=[],?string $message=null):self {
 
-
+        //If rule id Already used return this
         if(in_array('blockListContent',$this->ruleAlreadyUsedList)) {
             return $this;
         }
@@ -478,7 +491,8 @@ class PasswordPolicy  {
     }
 
     public function setLength(int $min=4,?int $max=null,?string $message=null) {
-
+        
+        //If rule id Already used return this
         if(in_array('setLength',$this->ruleAlreadyUsedList)) {
             return $this;
         }
@@ -489,16 +503,16 @@ class PasswordPolicy  {
         //Exception generator
         PasswordPolicyUtils::passwordLengthVerification($min,$max);
 
-        $maxExist=$max!==null;
+        $maxExist=!empty($max);
 
         $stringLength=mb_strlen($this->password);
         
        
-        $case1=!$maxExist&& $stringLength>=$min;
+        $minCase=!$maxExist&& $stringLength>=$min;
 
-        $case2=$maxExist && $stringLength>=$min && $stringLength<=$max;
+        $minmaxCase=$maxExist && $stringLength>=$min && $stringLength<=$max;
    
-        if($case1||$case2) {
+        if($minCase||$minmaxCase) {
             $this->incrementId();
             $this->ruleValidated[]='setLength';
             $this->passwordLength=$stringLength;
@@ -512,19 +526,12 @@ class PasswordPolicy  {
         //message
   
 
-        $message=match(true) {
-            !empty($message)=>$message,
-
-            ($stringLength>$max&&$maxExist)=>"the password must contain  $min to $max  characters",
-
-            ($stringLength===$min&&$min===$max)=>"the password must contain  $min characters",
-
-            ($stringLength<$min&&!$maxExist)=>"the password must contain minimum $min characters",
-
-            ($stringLength<$min&&$maxExist)=>"the password must contain  $min to $max characters",
-
-            default=>'error'
-        };
+        $message=WithMethodValidator::getSetLengthErrorMessage(
+        [
+            'max'=>$max,
+            'min'=>$min,
+            'stringLength'=>$stringLength
+        ]);
 
 
         if($message) {
@@ -602,13 +609,19 @@ class PasswordPolicy  {
     public function getData():DataBag {
 
         $totalRule=count($this->ruleAlreadyUsedList);
+
         $valideRule=$this->getId();
+
         $status=$this->getStatus();
+
         $password=$this->getPassword();
+
         $messages=$this->getMessages();
+
         $lenght=$this->getPasswordLength();
+
         
-        return (new DataBag($totalRule,$valideRule,$status,$password,$messages,$lenght));
+        return new DataBag($totalRule,$valideRule,$status,$password,$messages,$lenght);
 
     }
 

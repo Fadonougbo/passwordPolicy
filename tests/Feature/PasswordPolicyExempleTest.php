@@ -152,7 +152,7 @@ test('password  test2  ',function(string $secret) {
                             ->setLength(max:8)
                             ->getData();
 
-                            dump($result);
+                            //dump($result);
     
         expect($result)->toBeObject()->toHaveProperties([
           
@@ -179,7 +179,7 @@ test('password  test 3  ',function(string $secret) {
                             ->setLength(4,50)
                             ->getData();
 
-                            dump($result);
+                            //dump($result);
     
         expect($result)->toBeObject()->toHaveProperties([
           
@@ -228,7 +228,7 @@ test('test for readme 2',function($secret) {
                             ->withSymbol(max:3)
                             ->getData();
 
-                            dump($result);
+                            //dump($result);
     
         expect($result)->toBeObject()->toHaveProperties([
           
@@ -271,7 +271,7 @@ test('test for readme 4',function($secret) {
     $result=$passwordPolicy->blockSameCharacter(4)
                             ->getData();
 
-                            dump(password_hash('ok',PASSWORD_DEFAULT));
+                            //dump(password_hash('ok',PASSWORD_DEFAULT));
     
         expect($result)->toBeObject()->toHaveProperties([
           
