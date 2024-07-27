@@ -25,7 +25,7 @@ describe('Error Message test',function() {
        expect($message3)->toBe(
             [
                 'withLowercase'=>"Invalide password",
-                "symbol"=>'the password must contain minimum 1 special character',
+                "withSymbol"=>'the password must contain minimum 1 special character',
                 'withNumber'=>'the password must contain 0 number'
         ]); 
 

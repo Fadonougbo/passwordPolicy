@@ -6,7 +6,7 @@ use PasswordPolicy\PasswordPolicy;
 
        $passwordPolicy=new PasswordPolicy($secret);
 
-       $result=$passwordPolicy->blockSameCharacter()
+       $result=$passwordPolicy->blockSameCharacters()
                                 ->getStatus();
      
         expect($result)->toBeFalse();
@@ -18,7 +18,7 @@ use PasswordPolicy\PasswordPolicy;
 
        $passwordPolicy=new PasswordPolicy($secret);
 
-       $result=$passwordPolicy->blockSameCharacter()
+       $result=$passwordPolicy->blockSameCharacters()
                                 ->getStatus();
      
         expect($result)->toBeTrue();
@@ -30,7 +30,7 @@ use PasswordPolicy\PasswordPolicy;
 
     $passwordPolicy=new PasswordPolicy($secret);
 
-    $result=$passwordPolicy->blockSameCharacter(4)
+    $result=$passwordPolicy->blockSameCharacters(4)
                              ->getStatus();
   
      expect($result)->toBeFalse();

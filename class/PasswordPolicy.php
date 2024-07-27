@@ -321,7 +321,7 @@ class PasswordPolicy  {
 
         }
 
-        $this->messages['blockSameCharacter']="you cannot use the same letter or number more than {$repeatMin} times";
+        $this->messages['blockSameCharacters']="you cannot use the same letter or number more than {$repeatMin} times";
         
 
         return $this;

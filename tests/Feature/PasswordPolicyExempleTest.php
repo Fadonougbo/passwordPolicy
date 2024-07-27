@@ -95,7 +95,7 @@ test('Block same caracter  test  ',function(string $secret) {
 
     $result=$passwordPolicy->withNumber()
                             ->withLowercase()
-                            ->blockSameCharacter()
+                            ->blockSameCharacters()
                             ->getData();
 
                             
@@ -120,7 +120,7 @@ test('password  test1  ',function(string $secret) {
 
     $result=$passwordPolicy->withNumber(1)
                             ->withLowercase(1)
-                            ->blockSameCharacter()
+                            ->blockSameCharacters()
                             ->getData();
 
                             
@@ -148,7 +148,7 @@ test('password  test2  ',function(string $secret) {
                             ->blockCommonPasswords()
                             ->blockListContent(['john','doe'])
                             ->blockIf(true)
-                            ->blockSameCharacter()
+                            ->blockSameCharacters()
                             ->setLength(max:8)
                             ->getData();
 
@@ -268,7 +268,7 @@ test('test for readme 4',function($secret) {
 
     $passwordPolicy=new PasswordPolicy($secret);
 
-    $result=$passwordPolicy->blockSameCharacter(4)
+    $result=$passwordPolicy->blockSameCharacters(4)
                             ->getData();
 
                             //dump(password_hash('ok',PASSWORD_DEFAULT));
