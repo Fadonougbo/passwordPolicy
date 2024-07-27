@@ -1,4 +1,4 @@
-passwordPolicy is a library that allows defining various validation rules for passwords.
+PasswordPolicy is a library that allows defining various validation rules for passwords.
 
 ## Installation
 
@@ -113,9 +113,9 @@ $status=(new PasswordPolicy($password))
 | 9093761  | true      |
 | eiwWS39  | false     |
 | PASSWORD | false     |
-| #*@(#&   | TRUE      |
+| #*@(#&   | true      |
 
-#### The `blockSameCharacter` method invalidates the password if it contains repeated characters a certain number of times.
+#### The `blockSameCharacters` method invalidates the password if it contains repeated characters a certain number of times.
 
 e.g: aaaaaa ,bbbbb ,password11111
 
@@ -155,4 +155,36 @@ $status=(new PasswordPolicy('newpassword'))
     }else {
         echo 'You cannot use an old password.';
     }
+```
+
+#### Vous pouvez utilisez `blockCommonPasswords` pour blockquer quelque une des mots de passe les plus utiliser dans le monde comme azerty ou 12345
+
+```PHP
+use PasswordPolicy\PasswordPolicy;
+
+$response=(new PasswordPolicy('iloveyou'))
+               ->blockCommonPasswords("Cet mot de passe est trop faible") 
+               ->getData();  
+
+    if($response->status) {
+        echo 'Yes, it is ok';
+    }else {
+        echo $response->messages['blockCommonPasswords'];
+    }
+```
+
+```
+Cet mot de passe est trop faible
+```
+
+NB: Si vous avez besoin de definir une liste de mot de passe indesirable vous pouvez utilisez `blockListContent` 
+
+#### Definissez la taille d'un mot de passe avec `setLength` 
+
+```PHP
+use PasswordPolicy\PasswordPolicy;
+
+$response=(new PasswordPolicy('JohnD0e2oo2'))
+               ->setLength(6) // min 6 characters
+               ->getData();  
 ```

@@ -73,7 +73,7 @@ class PasswordPolicy  {
 
         
         if(!empty($errorMessage)) {
-            $this->messages['symbol']=$errorMessage; //Add message in error message array
+            $this->messages['withSymbol']=$errorMessage; //Add message in error message array
         }
 
         return $this;
@@ -263,14 +263,14 @@ class PasswordPolicy  {
       * @param string|null $message
       * @return self
       */
-    public function blockSameCharacter(int $repeatMin=5,?string $message=null):self {
+    public function blockSameCharacters(int $repeatMin=5,?string $message=null):self {
         
         //If rule id Already used return this
-        if(in_array('blockSameCharacter',$this->ruleAlreadyUsedList)) {
+        if(in_array('blockSameCharacters',$this->ruleAlreadyUsedList)) {
             return $this;
         }
         
-        $this->ruleAlreadyUsedList[]='blockSameCharacter';
+        $this->ruleAlreadyUsedList[]='blockSameCharacters';
 
         //Exception Generator
         PasswordPolicyUtils::passwordRepeatCharacterVerification($repeatMin);
@@ -305,10 +305,10 @@ class PasswordPolicy  {
         if(!$numberValidated&&!$uppercaseValidated&&!$lowercaseValidated) {
             
             $this->incrementId();
-            $this->ruleValidated[]='blockSameCharacter';
+            $this->ruleValidated[]='blockSameCharacters';
         }
 
-        if(in_array('blockSameCharacter',$this->ruleValidated)) {
+        if(in_array('blockSameCharacters',$this->ruleValidated)) {
             return $this;
         }
 
@@ -316,12 +316,12 @@ class PasswordPolicy  {
         //message
         if(!empty($message)) {
 
-            $this->messages['same_character']=$message;
+            $this->messages['blockSameCharacters']=$message;
             return $this;
 
         }
 
-        $this->messages['same_character']="you cannot use the same letter or number more than {$repeatMin} times";
+        $this->messages['blockSameCharacter']="you cannot use the same letter or number more than {$repeatMin} times";
         
 
         return $this;
@@ -372,13 +372,13 @@ class PasswordPolicy  {
         //message
         if(!empty($message)) {
 
-            $this->messages['block_reason']=$message;
+            $this->messages['blockIf']=$message;
 
             return $this;
 
         }
             
-        $this->messages['block_reason']="Password not accepted";
+        $this->messages['blockIf']="Password not accepted";
 
 
         return $this;
@@ -418,11 +418,11 @@ class PasswordPolicy  {
 
         if(!empty($message)) {
 
-            $this->messages['common_password']=$message;
+            $this->messages['blockCommonPasswords']=$message;
             return $this;
         }
             
-        $this->messages['common_password']="The password used is easy";
+        $this->messages['blockCommonPasswords']="The password used is easy";
         
 
         return $this;
@@ -474,15 +474,15 @@ class PasswordPolicy  {
 
         if(!empty($message)) {
 
-            $this->messages['block_list_content']=$message;
+            $this->messages['blockListContent']=$message;
 
         }else {
             $implodeList=implode(';',$list);
 
             if(count($list)>1) {
-                $this->messages['block_list_content']="The following words are not accepted in the password: {$implodeList}";
+                $this->messages['blockListContent']="The following words are not accepted in the password: {$implodeList}";
             }else {
-                $this->messages['block_list_content']="The following word is not accepted in the password: {$implodeList}";
+                $this->messages['blockListContent']="The following word is not accepted in the password: {$implodeList}";
             }
             
         }
@@ -535,7 +535,7 @@ class PasswordPolicy  {
 
 
         if($message) {
-            $this->messages['string_length']=$message;
+            $this->messages['setLength']=$message;
         }
 
         return $this;
