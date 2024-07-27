@@ -1,7 +1,7 @@
 {
     "name": "fadonougbo/password-policy",
     "description": "Password validation Library",
-    "keywords": ["password", "validation", "policy"],
+    "keywords": ["password", "validation", "password policy","pass","passeword validator","passwords","security"],
     "license": "MIT",
     "type": "library",
     "homepage": "https://github.com/Fadonougbo/passwordPolicy",
