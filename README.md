@@ -157,13 +157,14 @@ $status=(new PasswordPolicy('newpassword'))
     }
 ```
 
-#### Vous pouvez utilisez `blockCommonPasswords` pour blockquer quelque une des mots de passe les plus utiliser dans le monde comme azerty ou 12345
+
+#### You can use `blockCommonPasswords` to block some of the most commonly used passwords in the world, such as azerty or 12345.
 
 ```PHP
 use PasswordPolicy\PasswordPolicy;
 
 $response=(new PasswordPolicy('iloveyou'))
-               ->blockCommonPasswords("Cet mot de passe est trop faible") 
+               ->blockCommonPasswords("This password is too weak") 
                ->getData();  
 
     if($response->status) {
@@ -174,12 +175,12 @@ $response=(new PasswordPolicy('iloveyou'))
 ```
 
 ```
-Cet mot de passe est trop faible
+This password is too weak
 ```
 
-NB: Si vous avez besoin de definir une liste de mot de passe indesirable vous pouvez utilisez `blockListContent` 
+NB: If you need to define a list of undesirable passwords, you can use `blockListContent`.
 
-#### Definissez la taille d'un mot de passe avec `setLength` 
+#### Define the size of a password with`setLength` 
 
 ```PHP
 use PasswordPolicy\PasswordPolicy;
